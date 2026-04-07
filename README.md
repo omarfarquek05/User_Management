@@ -12,7 +12,7 @@ To run:
 bun dev
 ```
  ## 🏗️ Architecture: Layered Architecture (N-Tier)
-## REST API-এর জন্য Layered Architecture সবচেয়ে ভালো। এটাকে বলে Controller → Service → Repository pattern
+## REST API Layered Architecture. It's called Controller → Service → Repository pattern
 
 ```bash
 Request → Router → Controller → Service → Repository → Database
@@ -20,7 +20,7 @@ Response ← Router ← Controller ← Service ← Repository ← Database
 ```
 
 ```
-user-management/
+## user-management/
 │
 ├── src/
 │   ├── config/
