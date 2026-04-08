@@ -9,10 +9,10 @@ bun install
 To run:
 
 ```bash
-bun dev
+bun run index.ts
 ```
  ## 🏗️ Architecture: Layered Architecture (N-Tier)
-## REST API Layered Architecture. It's called Controller → Service → Repository pattern
+## REST API-এর জন্য Layered Architecture সবচেয়ে ভালো। এটাকে বলে Controller → Service → Repository pattern
 
 ```bash
 Request → Router → Controller → Service → Repository → Database
@@ -20,7 +20,7 @@ Response ← Router ← Controller ← Service ← Repository ← Database
 ```
 
 ```
-## user-management/
+user-management/
 │
 ├── src/
 │   ├── config/
@@ -58,5 +58,27 @@ Response ← Router ← Controller ← Service ← Repository ← Database
 ├── tsconfig.json
 └── README.md
 ```
+
+## 📁 Folder Explanation
+
+- **config/** → Environment & database configuration  
+- **db/** → Database schema, migrations, and connection  
+- **modules/** → Feature-based modules (user, auth, etc.)  
+- **middleware/** → Global middleware (error, logger)  
+- **utils/** → Helper functions (response, pagination)  
+- **index.ts** → Main entry point of the application  
+
+## 🔗 Data Flow Example (Create User)
+
+## 🔄 User Creation Flow
+
+1. **POST /api/users**
+2. **user.routes.ts** → Route match করে (Elysia)
+3. **user.dto.ts** → Request body validate করে
+4. **user.controller.ts** → Data extract করে service call করে
+5. **user.service.ts** → Business logic (duplicate check, hash password)
+6. **user.repository.ts** → Database query execute (Drizzle)
+7. **Neon PostgreSQL** → Data store হয়
+8. 🔁 Response একই flow দিয়ে back আসে
 
 This project was created using `bun init` in bun v1.3.10. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
