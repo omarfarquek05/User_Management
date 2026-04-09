@@ -2,7 +2,7 @@
 import Elysia from "elysia";
 import { type Permission } from "../constants/permissions";
 import { rbacService } from "../modules/rbac/rbac.service";
-import { verifyJwt } from "../utils/jwt";
+import { verifyAccessToken } from "../utils/jwt";
 
 export const requireAuth = new Elysia({ name: "requireAuth" })
   .derive({ as: 'global' }, async ({ headers, set }) => {
@@ -13,14 +13,14 @@ export const requireAuth = new Elysia({ name: "requireAuth" })
       throw new Error("Unauthorized: token missing");
     }
 
-    const payload = await verifyJwt(token); 
+    const payload = await verifyAccessToken(token);
     
     if (!payload?.userId) {
       set.status = 401;
-      throw new Error("Unauthorized: invalid token");
+      throw new Error("Unauthorized: invalid or expired token");
     }
 
-    return { userId: payload.userId as string };
+    return { userId: payload.userId, role: payload.role };
   });
 
 export const requirePermission = (...required: Permission[]) =>

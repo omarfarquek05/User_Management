@@ -20,6 +20,17 @@ export const rbacRepository = {
     return rows.map((r) => r.permission);
   },
 
+  async getRoleByUserId(userId: string) {
+    const rows = await db
+      .select({ name: roles.name })
+      .from(users)
+      .innerJoin(roles, eq(users.roleId, roles.id))
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    return rows[0] ?? null;
+  },
+
   async getAllRoles() {
     return db.select().from(roles);
   },

@@ -15,6 +15,13 @@
       "when": 1775714221109,
       "tag": "0001_dashing_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775719778142,
+      "tag": "0002_futuristic_microbe",
+      "breakpoints": true
     }
   ]
 }

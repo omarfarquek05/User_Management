@@ -16,7 +16,7 @@ export const userController = {
   },
 
   getById: async ({ params }: { params: IdParam }) => {
-    const user = await userService.getUserById(Number(params.id));
+    const user = await userService.getUserById(params.id);
     return sendSuccess("User fetched successfully", user);
   },
 
@@ -26,12 +26,12 @@ export const userController = {
   },
 
   update: async ({ params, body }: { params: IdParam; body: UpdateUserBody }) => {
-    const user = await userService.updateUser(Number(params.id), body);
+    const user = await userService.updateUser(params.id, body);
     return sendSuccess("User updated successfully", user);
   },
 
   delete: async ({ params }: { params: IdParam }) => {
-    await userService.deleteUser(Number(params.id));
+    await userService.deleteUser(params.id);
     return sendSuccess("User deleted successfully");
   },
 };

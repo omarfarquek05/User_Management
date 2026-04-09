@@ -13,5 +13,5 @@ export const updateUserDto = t.Object({
 });
 
 export const idParamDto = t.Object({
-  id: t.Numeric(),
+  id: t.String({ format: "uuid" }),
 });

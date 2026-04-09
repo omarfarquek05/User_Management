@@ -8,7 +8,7 @@ export const userRepository = {
     return await db.select().from(users);
   },
 
-  findById: async (id: number) => {
+  findById: async (id: string) => {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0] ?? null;
   },
@@ -23,7 +23,7 @@ export const userRepository = {
     return result[0];
   },
 
-  update: async (id: number, data: Partial<NewUser>) => {
+  update: async (id: string, data: Partial<NewUser>) => {
     const result = await db
       .update(users)
       .set({ ...data, updatedAt: new Date() })
@@ -32,7 +32,7 @@ export const userRepository = {
     return result[0] ?? null;
   },
 
-  delete: async (id: number) => {
+  delete: async (id: string) => {
     const result = await db
       .delete(users)
       .where(eq(users.id, id))

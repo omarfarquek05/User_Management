@@ -1,25 +1,56 @@
-// src/utils/jwt.ts
 import { SignJWT, jwtVerify } from "jose";
+import { env } from "../config/env";
 
-// একটি সিক্রেট কি (Secret Key) তৈরি করুন। 
-// প্রোডাকশনে এটি .env ফাইল থেকে আসা উচিত।
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-super-secret-key-change-this"
-);
+const accessSecret = new TextEncoder().encode(env.ACCESS_TOKEN_SECRET);
+const refreshSecret = new TextEncoder().encode(env.REFRESH_TOKEN_SECRET);
 
-export const signJwt = async (payload: any) => {
-  return await new SignJWT(payload)
+export type JwtPayload = {
+  userId: string;
+  email:  string;
+  role:   string;
+};
+
+export async function signAccessToken(payload: JwtPayload): Promise<string> {
+  return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d") // ৭ দিন পর টোকেন এক্সপায়ার হবে
-    .sign(SECRET);
-};
+    .setExpirationTime(env.ACCESS_TOKEN_EXPIRE)
+    .sign(accessSecret);
+}
 
-export const verifyJwt = async (token: string) => {
+export async function signRefreshToken(payload: JwtPayload): Promise<string> {
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(env.REFRESH_TOKEN_EXPIRE)
+    .sign(refreshSecret);
+}
+
+export async function verifyAccessToken(token: string): Promise<JwtPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET);
-    return payload as { userId: string };
-  } catch (error) {
-    return null; // টোকেন ইনভ্যালিড হলে null রিটার্ন করবে
+    const { payload } = await jwtVerify(token, accessSecret);
+    return payload as JwtPayload;
+  } catch {
+    return null;
   }
-};
+}
+
+export async function verifyRefreshToken(token: string): Promise<JwtPayload | null> {
+  try {
+    const { payload } = await jwtVerify(token, refreshSecret);
+    return payload as JwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+export function parseExpireToDate(expire: string): Date {
+  const unit = expire.slice(-1);
+  const value = Number(expire.slice(0, -1));
+  const ms = unit === "d"
+    ? value * 86400000
+    : unit === "h"
+      ? value * 3600000
+      : value * 60000;
+  return new Date(Date.now() + ms);
+}

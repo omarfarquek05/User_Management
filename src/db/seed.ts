@@ -1,34 +1,36 @@
 // src/db/seed.ts
 
 import { db } from "../config/database";
-import { roles, permissions, rolePermissions } from "./schema";
+import { roles, permissions, rolePermissions, users } from "./schema";
 import { PERMISSIONS } from "../constants/permissions";
+import { eq } from "drizzle-orm";
 
 async function seed() {
   console.log("🌱 Seeding started...");
 
   // ── Roles ─────────────────────────────────────────────────────
-  const insertedRoles = await db
+  // First try to insert, then query existing ones
+  await db
     .insert(roles)
     .values([
       { name: "admin",   description: "Full system access" },
       { name: "teacher", description: "Course and result management" },
       { name: "student", description: "View only access" },
     ])
-    .onConflictDoNothing()
-    .returning();
+    .onConflictDoNothing();
 
+  const insertedRoles = await db.select().from(roles);
   console.log("✅ Roles seeded");
 
   // ── Permissions ───────────────────────────────────────────────
-  const insertedPerms = await db
+  await db
     .insert(permissions)
     .values(
       Object.values(PERMISSIONS).map((name) => ({ name, description: name }))
     )
-    .onConflictDoNothing()
-    .returning();
+    .onConflictDoNothing();
 
+  const insertedPerms = await db.select().from(permissions);
   console.log("✅ Permissions seeded");
 
   // ── Helpers ───────────────────────────────────────────────────
@@ -58,6 +60,23 @@ async function seed() {
   await db.insert(rolePermissions).values(mappings).onConflictDoNothing();
 
   console.log("✅ Role-Permission mapping seeded");
+
+  // ── Admin User ────────────────────────────────────────────────
+  const hashedPassword = await Bun.password.hash("admin123"); // Default password
+
+  await db
+    .insert(users)
+    .values({
+      name: "System Admin",
+      email: "admin@example.com",
+      password: hashedPassword,
+      roleId: role("admin").id,
+    })
+    .onConflictDoNothing();
+
+  console.log("✅ Admin user created");
+  console.log("   Email: admin@example.com");
+  console.log("   Password: admin123");
   console.log("🎉 Seeding complete!");
   process.exit(0);
 }

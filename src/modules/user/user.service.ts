@@ -6,7 +6,7 @@ export const userService = {
     return await userRepository.findAll();
   },
 
-  getUserById: async (id: number) => {
+  getUserById: async (id: string) => {
     const user = await userRepository.findById(id);
     if (!user) throw new Error("USER_NOT_FOUND");
     return user;
@@ -25,7 +25,7 @@ export const userService = {
     });
   },
 
-  updateUser: async (id: number, data: { name?: string; email?: string; password?: string }) => {
+  updateUser: async (id: string, data: { name?: string; email?: string; password?: string }) => {
     const existing = await userRepository.findById(id);
     if (!existing) throw new Error("USER_NOT_FOUND");
 
@@ -41,7 +41,7 @@ export const userService = {
     return await userRepository.update(id, updateData);
   },
 
-  deleteUser: async (id: number) => {
+  deleteUser: async (id: string) => {
     const existing = await userRepository.findById(id);
     if (!existing) throw new Error("USER_NOT_FOUND");
     return await userRepository.delete(id);
