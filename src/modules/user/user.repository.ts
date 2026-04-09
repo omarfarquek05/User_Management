@@ -1,5 +1,5 @@
-import { db } from "../../db/schema/index";
-import { users, NewUser } from "../../db/schema/user.schema";
+import { db } from "../../config/database";
+import { users, type NewUser } from "../../db/schema/user.schema";
 import { eq } from "drizzle-orm";
 
 export const userRepository = {

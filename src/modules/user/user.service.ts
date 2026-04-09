@@ -17,8 +17,7 @@ export const userService = {
     const existing = await userRepository.findByEmail(data.email);
     if (existing) throw new Error("EMAIL_ALREADY_EXISTS");
 
-    // Business logic: password hash (simple btoa for demo, use bcrypt in production)
-    const hashedPassword = btoa(data.password);
+    const hashedPassword = await Bun.password.hash(data.password);
 
     return await userRepository.create({
       ...data,
@@ -37,7 +36,7 @@ export const userService = {
     }
 
     const updateData: Record<string, unknown> = { ...data };
-    if (data.password) updateData.password = btoa(data.password);
+    if (data.password) updateData.password = await Bun.password.hash(data.password);
 
     return await userRepository.update(id, updateData);
   },

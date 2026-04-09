@@ -1,1 +1,3 @@
-export { db } from "../../config/database";
+
+export * from "./rbac.schema";
+export * from "./user.schema";
